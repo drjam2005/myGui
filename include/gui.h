@@ -1,5 +1,8 @@
 #pragma once
+#ifndef MYGUI_H
+#define MYGUI_H
 #include <raylib.h>
+
 #include <string>
 #include <functional>
 
@@ -40,3 +43,4 @@ namespace myGui {
 			bool Update();
 	};
 }
+#endif

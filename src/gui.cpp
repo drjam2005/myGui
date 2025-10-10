@@ -1,4 +1,5 @@
 #include <gui.h>
+#ifdef MYGUI_H
 
 // Button implementation
 myGui::Button::Button(Rectangle dimensions, char* text, float round){
@@ -136,8 +137,8 @@ void myGui::TextField::Render(){
 bool myGui::TextField::Update() {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         isInText = CheckCollisionPointRec(GetMousePosition(), dimensions);
-
     if (!isInText) return false;
+
 	if (IsKeyPressed(KEY_ENTER)) {
 		if ((IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))){
 			currentMessage += '\n';
@@ -149,7 +150,6 @@ bool myGui::TextField::Update() {
 	}
 
     int key = GetCharPressed();
-
     while (key > 0) {
         if (key >= 32 && key <= 125){
             currentMessage += static_cast<char>(key);
@@ -166,3 +166,4 @@ bool myGui::TextField::Update() {
 	return false;
 }
 
+#endif
