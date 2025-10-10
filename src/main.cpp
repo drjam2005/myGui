@@ -10,7 +10,8 @@ int main(void) {
 	button.SetHold   ([&]{std::cout << "hold"    << std::endl;});
 	button.SetRelease([&]{std::cout << "release" << std::endl;});
 
-	myGui::TextField textField({5.0, 5.0, 200.0f, 75.0f}, "hi", 5.0f);
+	std::string message = "yooo";
+	myGui::TextField textField({5.0, 5.0, 200.0f, 75.0f}, &message, 5.0f);
 
 	while(!WindowShouldClose()){
 		BeginDrawing();
@@ -19,8 +20,11 @@ int main(void) {
 		button.Update();
 		button.Render();
 
-		textField.Update();
+		if(textField.Update()){
+			std::cout << message << std::endl;
+		}
 		textField.Render();
+
 
 		EndDrawing();
 	}

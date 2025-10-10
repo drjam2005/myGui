@@ -81,7 +81,7 @@ void myGui::Button::Update(){
 }
 
 // TextField implementation
-myGui::TextField::TextField(Rectangle dimensions, char* initialMessage, float round){
+myGui::TextField::TextField(Rectangle dimensions, std::string* initialMessage, float round){
 	this->dimensions = dimensions;
 	if(0.0f < dimensions.x && dimensions.x < 1.0f){
 		this->dimensions.x = dimensions.x * GetScreenWidth();
@@ -96,7 +96,8 @@ myGui::TextField::TextField(Rectangle dimensions, char* initialMessage, float ro
 		this->dimensions.height = dimensions.height * GetScreenHeight();
 	}
 
-	this->currentMessage = initialMessage;
+	this->currentMessage = *initialMessage;
+	this->outputMessage = initialMessage;
 }
 
 void myGui::TextField::Render(){
@@ -132,16 +133,19 @@ void myGui::TextField::Render(){
 	DrawText(TextFormat("%s", this->currentMessage.c_str()), dimensions.x + 10, dimensions.y + 10, 10, BLACK);
 }
 
-void myGui::TextField::Update() {
+bool myGui::TextField::Update() {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         isInText = CheckCollisionPointRec(GetMousePosition(), dimensions);
 
-    if (!isInText) return;
+    if (!isInText) return false;
 	if (IsKeyPressed(KEY_ENTER)) {
 		if ((IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))){
 			currentMessage += '\n';
-		}else
+		}else{
+			*outputMessage = currentMessage;
 			currentMessage.clear();
+			return true;
+		}
 	}
 
     int key = GetCharPressed();
@@ -155,5 +159,7 @@ void myGui::TextField::Update() {
 
     if (IsKeyPressed(KEY_BACKSPACE) && !currentMessage.empty())
         currentMessage.pop_back();
+
+    return false;
 }
 

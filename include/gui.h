@@ -28,14 +28,15 @@ namespace myGui {
 	class TextField {
 		private:
 			Rectangle dimensions;
+			std::string* outputMessage;
 			float round = 0.f;
 		public:
 			std::string currentMessage = "";
 			bool isInText = false;
 			TextField(){}
-			TextField(Rectangle, char*, float round=0.0f);
+			TextField(Rectangle, std::string*, float round=0.0f);
 
 			void Render();
-			void Update();
+			bool Update();
 	};
 }
