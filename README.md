@@ -6,6 +6,9 @@
 ## Features
 - Button
 - TextField
+- ~~Checkbox~~
+- ~~Radio buttons~~
+- ~~Slider~~
 
 ## Usage
 

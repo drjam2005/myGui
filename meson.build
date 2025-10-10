@@ -19,6 +19,7 @@ src = [
   'src/gui.cpp',
   'src/main.cpp',
 ]
+
 exe = executable(
   'gui',
   src,
