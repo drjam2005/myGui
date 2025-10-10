@@ -21,8 +21,8 @@ int main(){
     // button initialization
     myGui::Button button(
         .dimensions = {
-            .x = 10,      // Note: you can use values between 0 and 1 to indicade percentages of screen
-            .y = .2,
+            .x = 10,      
+            .y = .2, // Note: you can use values between 0 and 1 to indicade percentages of screen
             .width = 100,
             .height = 50
         },
@@ -52,6 +52,7 @@ int main(){
 
 2. `TextField`
 ```cpp
+#include <iostream>
 #include <raylib.h>
 #include <gui.h>
 
@@ -60,8 +61,8 @@ int main(){
     std::string message = ""; // will be used to store the message when the user presses KEY_ENTER
     myGui::TextField textField(
         .dimensions = {
-            .x = 10,      // Note: you can use values between 0 and 1 to indicade percentages of screen
-            .y = .2,
+            .x = 10,
+            .y = .2, // Note: you can use values between 0 and 1 to indicade percentages of screen
             .width = 100,
             .height = 50
         },
