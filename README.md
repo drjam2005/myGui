@@ -17,13 +17,6 @@ void doX(int x){
     // function x
 }
 
-void doY(int y){
-    // function y
-}
-
-void doZ(int z){
-    // function z
-}
 int main(){
     // button initialization
     myGui::Button button(
@@ -38,8 +31,8 @@ int main(){
     );
 
     button.SetClick  ([&]{ doX(5)});
- // button.SetHold   ([&]{ doY(6)});
- // button.SetRelease([&]{ doZ(7)});
+ // button.SetHold   ([&]{ doX(6)});
+ // button.SetRelease([&]{ doX(7)});
 
     InitWindow(500, 500, "myGui");
     SetTargetFPS(60);
