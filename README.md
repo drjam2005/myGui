@@ -1,3 +1,3 @@
-# myGui
-
-for study purposes
+ myGui
+===
+    - An immediate mode GUI rendering utility for personal use and study
