@@ -59,18 +59,18 @@ int main(){
 
 int main(){
     // textfield initialization
-    std::string message = "Message!!"; // will be used to store the message
-                                       // will also be used to initially fill the text buffer
+    std::string message = ""; // will be used to store the message when the user presses KEY_ENTER
     myGui::TextField textField(
-        {                     // dimensions
+        {
             .x = 10,
             .y = .2, // Note: you can use values between 0 and 1 to indicade percentages of screen
             .width = 100,
             .height = 50
         },
-        &message,             // the message
-        5.0f                  // optional rounding
+        &message,
+        5.0f
     );
+
 
     InitWindow(500, 500, "myGui");
     SetTargetFPS(60);
@@ -78,13 +78,15 @@ int main(){
         BeginDrawing();
         ClearBackground(BLACK);
 
-        if(textField.Update()){ // returns true if the user presses a valid character that can be stored in the message
-            std::cout << message << std::endl;
+		std::cout << "Message: " << message << std::endl;
+        if(textField.Update()) { // returns true if the user presses enter
+			std::cout << "User pressed Enter!" << std::endl;
         }
         textField.Render();
 
         EndDrawing();
     }
 }
+
 
 ```
