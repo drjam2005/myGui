@@ -1,6 +1,6 @@
  myGui
 ===
-    - An immediate mode GUI rendering utility for personal use and study
+    - A raylib based, immediate mode GUI rendering utility for personal use and study
       still very much in a Work in Progress...
 
 ## Features
