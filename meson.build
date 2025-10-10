@@ -6,12 +6,21 @@ project(
   default_options : ['warning_level=3', 'cpp_std=c++14'],
 )
 
+raylibDep = declare_dependency(
+  include_directories: include_directories('include'),
+  link_args: ['-L' + meson.project_source_root() / 'lib', '-lraylib'],
+)
+
 dependencies = [
+  raylibDep,
 ]
 
+src = [
+  'src/main.cpp',
+]
 exe = executable(
   'gui',
-  'gui.cpp',
+  src,
   install : true,
   dependencies : dependencies,
 )
