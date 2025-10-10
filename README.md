@@ -1,6 +1,7 @@
  myGui
 ===
     - An immediate mode GUI rendering utility for personal use and study
+      still very much in a Work in Progress...
 
 ## Features
 - Button
@@ -20,14 +21,14 @@ void doX(int x){
 int main(){
     // button initialization
     myGui::Button button(
-        .dimensions = {
+        {                   // dimensions
             .x = 10,      
             .y = .2, // Note: you can use values between 0 and 1 to indicade percentages of screen
             .width = 100,
             .height = 50
         },
-        .text = "Click Me!",
-        .round = 5.0f // optional rounding
+        "Click Me!",        // text to render
+        5.0f                // optional rounding
     );
 
     button.SetClick  ([&]{ doX(5)});
@@ -58,18 +59,18 @@ int main(){
 
 int main(){
     // textfield initialization
-    std::string message = ""; // will be used to store the message when the user presses KEY_ENTER
+    std::string message = "Message!!"; // will be used to store the message
+                                       // will also be used to initially fill the text buffer
     myGui::TextField textField(
-        .dimensions = {
+        {                     // dimensions
             .x = 10,
             .y = .2, // Note: you can use values between 0 and 1 to indicade percentages of screen
             .width = 100,
             .height = 50
         },
-        .initialMessage = &message;
-        .round = 5.0f // optional rounding
+        &message,             // the message
+        5.0f                  // optional rounding
     );
-
 
     InitWindow(500, 500, "myGui");
     SetTargetFPS(60);
@@ -77,7 +78,7 @@ int main(){
         BeginDrawing();
         ClearBackground(BLACK);
 
-        if(textField.Update()){ // returns true if the user presses enter
+        if(textField.Update()){ // returns true if the user presses a valid character that can be stored in the message
             std::cout << message << std::endl;
         }
         textField.Render();

@@ -1,32 +1,35 @@
 #include <iostream>
+#include <raylib.h>
 #include <gui.h>
 
-int main(void) {
-	InitWindow(800, 600, "title");
-	SetTargetFPS(60);
-
-	myGui::Button button({0.5, 0.5, 0.25, 0.25}, "Click Me!", 2.0f);
-	button.SetClick  ([&]{std::cout << "click"   << std::endl;});
-	button.SetHold   ([&]{std::cout << "hold"    << std::endl;});
-	button.SetRelease([&]{std::cout << "release" << std::endl;});
-
-	std::string message = "yooo";
-	myGui::TextField textField({5.0, 5.0, 200.0f, 75.0f}, &message, 5.0f);
-
-	while(!WindowShouldClose()){
-		BeginDrawing();
-		ClearBackground(BLACK);
-
-		button.Update();
-		button.Render();
-
-		if(textField.Update()){
-			std::cout << message << std::endl;
-		}
-		textField.Render();
+int main(){
+    // textfield initialization
+    std::string message = ""; // will be used to store the message when the user presses KEY_ENTER
+    myGui::TextField textField(
+        {
+            .x = 10,
+            .y = .2, // Note: you can use values between 0 and 1 to indicade percentages of screen
+            .width = 100,
+            .height = 50
+        },
+        &message,
+        5.0f
+    );
 
 
-		EndDrawing();
-	}
-    return 0;
+    InitWindow(500, 500, "myGui");
+    SetTargetFPS(60);
+    while(!WindowShouldClose()){
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+		std::cout << "Message: " << message << std::endl;
+        if(textField.Update()){ // returns true if the user presses enter
+			std::cout << "User pressed Enter!" << std::endl;
+        }
+        textField.Render();
+
+        EndDrawing();
+    }
 }
+

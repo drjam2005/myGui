@@ -92,7 +92,7 @@ myGui::TextField::TextField(Rectangle dimensions, std::string* initialMessage, f
 	if(0.0f < dimensions.y && dimensions.y < 1.0f){
 		this->dimensions.y = dimensions.y * GetScreenHeight();
 	}
-	if(0.0f < dimensions.y && dimensions.y < 1.0f){
+	if(0.0f < dimensions.height && dimensions.height < 1.0f){
 		this->dimensions.height = dimensions.height * GetScreenHeight();
 	}
 
@@ -142,8 +142,8 @@ bool myGui::TextField::Update() {
 		if ((IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))){
 			currentMessage += '\n';
 		}else{
-			*outputMessage = currentMessage;
 			currentMessage.clear();
+			*outputMessage = currentMessage;
 			return true;
 		}
 	}
@@ -151,15 +151,18 @@ bool myGui::TextField::Update() {
     int key = GetCharPressed();
 
     while (key > 0) {
-        if (key >= 32 && key <= 125)
+        if (key >= 32 && key <= 125){
             currentMessage += static_cast<char>(key);
-
+			*outputMessage = currentMessage;
+		}
         key = GetCharPressed();
     }
 
-    if (IsKeyPressed(KEY_BACKSPACE) && !currentMessage.empty())
+    if (IsKeyPressed(KEY_BACKSPACE) && !currentMessage.empty()){
         currentMessage.pop_back();
+		*outputMessage = currentMessage;
+	}
 
-    return false;
+	return false;
 }
 
