@@ -1,6 +1,12 @@
 #include <gui.h>
 #ifdef MYGUI_H
 
+// TODO:
+//    Checkbox
+//    Radio buttons
+//    Slider
+
+
 // Button implementation
 myGui::Button::Button(Rectangle dimensions, char* text, float round){
 	this->dimensions = dimensions;
