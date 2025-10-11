@@ -13,7 +13,7 @@ myGui::Button::Button(Rectangle dimensions, char* text, float round){
 	if(0.0f < dimensions.y && dimensions.y < 1.0f){
 		this->dimensions.y = dimensions.y * GetScreenHeight();
 	}
-	if(0.0f < dimensions.y && dimensions.y < 1.0f){
+	if(0.0f < dimensions.height && dimensions.height < 1.0f){
 		this->dimensions.height = dimensions.height * GetScreenHeight();
 	}
 	this->text = text;
