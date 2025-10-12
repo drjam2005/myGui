@@ -1,35 +1,63 @@
 #include <raylib.h>
+#include <iostream>
 #include <gui.h>
 
-void doX(int x){
-    // function x
-}
-
 int main(){
-    // button initialization
+	// window 
+	InitWindow(500, 500, "myGui");
+	SetTargetFPS(60);
+	// objects 
     myGui::Button button(
-        {                   // dimensions
+        {                   
             .x = 10,      
-            .y = 0.2f, // Note: you can use values between 0 and 1 to indicade percentages of screen
+            .y = 0.2f,
             .width = 100,
             .height = 50
         },
-        "Click Me!",        // text to render
-        5.0f                // optional rounding
+        (char*)"Click Me!",
+        5.0f
     );
+	button.SetClick([&]{std::cout << "hi.." << std::endl;;});
 
-    button.SetClick  ([&]{ doX(5);});
- // button.SetHold   ([&]{ doX(6);});
- // button.SetRelease([&]{ doX(7);});
+    myGui::Button button2(
+        {                   
+            .x = 10,      
+            .y = 0.2f,
+            .width = 120,
+            .height = 50
+        },
+        (char*)"Click Me!",
+        5.0f
+    );
+	button2.SetClick([&]{std::cout << "hello.." << std::endl;;});
 
-    InitWindow(500, 500, "myGui");
-    SetTargetFPS(60);
+	std::string str = "hii...";
+    myGui::TextField textfield(
+        {                   
+            .x = 10,      
+            .y = 0.2f,
+            .width = 120,
+            .height = 50
+        },
+        &str,
+        5.0f
+    );
+	myGui::Widget widget({10, 10, 150, 400}, {10, 10, 10, 10});
+	widget.AddObject(&button);
+	widget.AddObject(&button2);
+	widget.AddObject(&textfield);
+
+	// loop
     while(!WindowShouldClose()){
         BeginDrawing();
         ClearBackground(BLACK);
 
-        button.Update();
-        button.Render();
+		widget.Render();
+		widget.Update();
+		if(textfield.checkEnter()){
+			std::cout << "Message: " << str << std::endl;
+			str.clear();
+		}
 
         EndDrawing();
     }

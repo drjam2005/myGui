@@ -5,11 +5,26 @@
 
 #include <string>
 #include <functional>
+#include <vector>
 
 namespace myGui {
-	class Button {
+	class Widget {
 		private:
+		public:
+			std::vector<Widget*> objects;
 			Rectangle dimensions;
+			Rectangle padding;
+
+			Widget(Rectangle dimensions, Rectangle padding={0.f,0.f,0.f,0.f});
+			void AddObject(void* object);
+			virtual void changePosition(Vector2 position);
+			virtual void Update();
+			virtual void Render();
+			virtual Rectangle getDimensions();
+	};
+
+	class Button : public Widget {
+		private:
 			float round = 0.f;
 			bool autoscale = false;
 			char* text = nullptr;
@@ -18,29 +33,35 @@ namespace myGui {
 			std::function<void()> onHold;
 			std::function<void()> onRelease;
 		public:
-			Button(){}
+			Button();
 			Button(Rectangle, char*, float round=0.0f);
 			void SetClick(std::function<void()>);
 			void SetHold(std::function<void()>);
 			void SetRelease(std::function<void()>);
 
-			void Render();
-			void Update();
+			void Render() override;
+			void Update() override;
+			void changePosition(Vector2 position) override;
+			Rectangle getDimensions() override;
 	};
 
-	class TextField {
+	class TextField : public Widget{
 		private:
 			Rectangle dimensions;
 			std::string* outputMessage;
 			float round = 0.f;
+			bool isEnter = false;
+			bool shouldClear = false;
 		public:
-			std::string currentMessage = "";
 			bool isInText = false;
-			TextField(){}
+			TextField();
 			TextField(Rectangle, std::string*, float round=0.0f);
 
-			void Render();
-			bool Update();
+			void Render() override;
+			void Update() override;
+			void changePosition(Vector2 position) override;
+			bool checkEnter();
+			Rectangle getDimensions() override;
 	};
 }
 #endif

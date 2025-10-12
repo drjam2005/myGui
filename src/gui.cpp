@@ -6,10 +6,59 @@
 //    Radio buttons
 //    Slider
 
-
-// Button implementation
-myGui::Button::Button(Rectangle dimensions, char* text, float round){
+// Widget
+myGui::Widget::Widget(Rectangle dimensions, Rectangle padding){
 	this->dimensions = dimensions;
+	this->padding = padding;
+}
+void myGui::Widget::changePosition(Vector2 position){
+	this->dimensions.x = position.x;
+	this->dimensions.y = position.y;
+}
+
+void myGui::Widget::Render(){
+	float currentHeight = 0.0f;
+	DrawRectangleRec(this->dimensions, Color{50,50,100,255});
+	for (auto& object : objects) {
+		currentHeight += object->getDimensions().height;
+		if(object->getDimensions().width > this->getDimensions().width) continue;
+		if(currentHeight >= this->getDimensions().height) return;
+		object->Render();
+	}
+}
+
+void myGui::Widget::AddObject(void* object){
+	Widget* objectToAdd = (Widget*)object;
+
+	float currHeight = 0.0f;
+	for (auto& obj : objects) {
+		currHeight += padding.y + obj->getDimensions().height + padding.height;
+		if(obj == object) {
+			break;
+		}
+	}
+	
+	objectToAdd->changePosition(Vector2{
+		this->dimensions.x + padding.x,
+		this->dimensions.y + currHeight + padding.y
+	});
+
+	objects.push_back(objectToAdd);
+}
+
+void myGui::Widget::Update() {
+	for(auto& object : objects){
+		object->Update();
+	}
+}
+Rectangle myGui::Widget::getDimensions(){
+	return dimensions;
+}
+// Button implementation
+myGui::Button::Button(): Widget({},{}) {}
+myGui::Button::Button(Rectangle dimensions, char* text, float round): 
+	Widget(dimensions)
+{
 	if(0.0f < dimensions.x && dimensions.x < 1.0f){
 		this->dimensions.x = dimensions.x * GetScreenWidth();
 	}
@@ -87,8 +136,19 @@ void myGui::Button::Update(){
 	}
 }
 
+void myGui::Button::changePosition(Vector2 position){
+	this->dimensions.x = position.x;
+	this->dimensions.y = position.y;
+}
+Rectangle myGui::Button::getDimensions(){
+	return this->dimensions;
+}
+
 // TextField implementation
-myGui::TextField::TextField(Rectangle dimensions, std::string* initialMessage, float round){
+myGui::TextField::TextField(): Widget({},{}) {}
+myGui::TextField::TextField(Rectangle dimensions, std::string* initialMessage, float round):
+	Widget(dimensions)
+{
 	this->dimensions = dimensions;
 	if(0.0f < dimensions.x && dimensions.x < 1.0f){
 		this->dimensions.x = dimensions.x * GetScreenWidth();
@@ -103,17 +163,13 @@ myGui::TextField::TextField(Rectangle dimensions, std::string* initialMessage, f
 		this->dimensions.height = dimensions.height * GetScreenHeight();
 	}
 
-	this->currentMessage = *initialMessage;
 	this->outputMessage = initialMessage;
 }
 
 void myGui::TextField::Render(){
-    bool isInside = CheckCollisionPointRec(GetMousePosition(), dimensions);
-	Color clr = WHITE;
-	if(isInside)
-		clr = GRAY;
-	if(isInside && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-		clr = DARKGRAY;
+	Color clr = GRAY;
+	if(isInText)
+		clr = WHITE;
 
     Rectangle verticalPart = {
         dimensions.x + round,
@@ -137,39 +193,58 @@ void myGui::TextField::Render(){
     DrawRectangle(verticalPart.x, verticalPart.y, verticalPart.width, verticalPart.height, clr);
     DrawRectangle(horizontalPart.x, horizontalPart.y, horizontalPart.width, horizontalPart.height, clr);
 
-	DrawText(TextFormat("%s", this->currentMessage.c_str()), dimensions.x + 10, dimensions.y + 10, 10, BLACK);
+	DrawText(TextFormat("%s", this->outputMessage->c_str()), dimensions.x + 10, dimensions.y + 10, 10, BLACK);
 }
 
-bool myGui::TextField::Update() {
+void myGui::TextField::Update() {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         isInText = CheckCollisionPointRec(GetMousePosition(), dimensions);
-    if (!isInText) return false;
+    if (!isInText) return;
 
 	if (IsKeyPressed(KEY_ENTER)) {
 		if ((IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))){
-			currentMessage += '\n';
+			*outputMessage += '\n';
 		}else{
-			currentMessage.clear();
-			*outputMessage = currentMessage;
-			return true;
+			isEnter = true;
+			shouldClear = true;
+			return;
 		}
 	}
 
     int key = GetCharPressed();
     while (key > 0) {
         if (key >= 32 && key <= 125){
-            currentMessage += static_cast<char>(key);
-			*outputMessage = currentMessage;
+            *outputMessage += static_cast<char>(key);
 		}
         key = GetCharPressed();
     }
 
-    if (IsKeyPressed(KEY_BACKSPACE) && !currentMessage.empty()){
-        currentMessage.pop_back();
-		*outputMessage = currentMessage;
+    if (IsKeyPressed(KEY_BACKSPACE) && !outputMessage->empty()){
+		outputMessage->pop_back();
 	}
 
+	if (shouldClear && !isEnter) {
+        outputMessage->clear();
+        shouldClear = false;
+    }
+
+	return;
+}
+
+bool myGui::TextField::checkEnter(){
+	if(isEnter){
+		isEnter = false;
+		return true;
+	}
 	return false;
+}
+void myGui::TextField::changePosition(Vector2 position){
+	this->dimensions.x = position.x;
+	this->dimensions.y = position.y;
+}
+
+Rectangle myGui::TextField::getDimensions(){
+	return this->dimensions;
 }
 
 #endif
