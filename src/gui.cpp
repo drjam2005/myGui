@@ -1,4 +1,6 @@
 #include <gui.h>
+#include <helpers.h>
+#include <sstream>
 #ifdef MYGUI_H
 
 // TODO:
@@ -193,7 +195,14 @@ void myGui::TextField::Render(){
     DrawRectangle(verticalPart.x, verticalPart.y, verticalPart.width, verticalPart.height, clr);
     DrawRectangle(horizontalPart.x, horizontalPart.y, horizontalPart.width, horizontalPart.height, clr);
 
-	DrawText(TextFormat("%s", this->outputMessage->c_str()), dimensions.x + 10, dimensions.y + 10, 10, BLACK);
+	Font font = GetFontDefault();
+	float fontSize = 10.0f;
+	float spacing = 1.0f;
+	float maxWidth = dimensions.width - padding.x - padding.width - 10.0f;
+
+	std::string wrappedText = WrapText(*outputMessage, maxWidth, fontSize, spacing, font);
+	DrawTextEx(font, wrappedText.c_str(), {dimensions.x + 10, dimensions.y + 10}, fontSize, spacing, BLACK);
+
 }
 
 void myGui::TextField::Update() {

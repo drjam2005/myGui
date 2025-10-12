@@ -17,7 +17,9 @@ dependencies = [
 
 src = [
   'src/gui.cpp',
+  'src/helpers.cpp',
   'src/main.cpp',
+
 ]
 
 exe = executable(
