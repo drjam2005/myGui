@@ -6,6 +6,7 @@ int main(){
 	// window 
 	InitWindow(500, 500, "myGui");
 	SetTargetFPS(60);
+
 	// objects 
     myGui::Button button(
         {                   
@@ -36,16 +37,28 @@ int main(){
         {                   
             .x = 10,      
             .y = 0.2f,
-            .width = 120,
+            .width = 200,
             .height = 50
         },
         &str,
         5.0f
     );
+    myGui::Button button3(
+        {                   
+            .x = 10,      
+            .y = 0.2f,
+            .width = 120,
+            .height = 50
+        },
+        (char*)"submit",
+        5.0f
+    );
+	button3.SetClick([&]{textfield.submitText();});
 	myGui::Widget widget({10, 10, 150, 400}, {10, 10, 10, 10});
 	widget.AddObject(&button);
 	widget.AddObject(&button2);
 	widget.AddObject(&textfield);
+	widget.AddObject(&button3);
 
 	// loop
     while(!WindowShouldClose()){

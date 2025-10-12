@@ -18,6 +18,7 @@ namespace myGui {
 			Widget(Rectangle dimensions, Rectangle padding={0.f,0.f,0.f,0.f});
 			void AddObject(void* object);
 			virtual void changePosition(Vector2 position);
+			virtual void changeDimensions(Rectangle dimensions);
 			virtual void Update();
 			virtual void Render();
 			virtual Rectangle getDimensions();
@@ -42,12 +43,12 @@ namespace myGui {
 			void Render() override;
 			void Update() override;
 			void changePosition(Vector2 position) override;
+			void changeDimensions(Rectangle dimensions) override;
 			Rectangle getDimensions() override;
 	};
 
 	class TextField : public Widget{
 		private:
-			Rectangle dimensions;
 			std::string* outputMessage;
 			float round = 0.f;
 			bool isEnter = false;
@@ -57,10 +58,13 @@ namespace myGui {
 			TextField();
 			TextField(Rectangle, std::string*, float round=0.0f);
 
+			void submitText();
+			bool checkEnter();
+
 			void Render() override;
 			void Update() override;
 			void changePosition(Vector2 position) override;
-			bool checkEnter();
+			void changeDimensions(Rectangle dimensions) override;
 			Rectangle getDimensions() override;
 	};
 }

@@ -18,12 +18,15 @@ void myGui::Widget::changePosition(Vector2 position){
 	this->dimensions.y = position.y;
 }
 
+void myGui::Widget::changeDimensions(Rectangle dimensions){
+	this->dimensions = dimensions;
+}
+
 void myGui::Widget::Render(){
 	float currentHeight = 0.0f;
 	DrawRectangleRec(this->dimensions, Color{50,50,100,255});
 	for (auto& object : objects) {
 		currentHeight += object->getDimensions().height;
-		if(object->getDimensions().width > this->getDimensions().width) continue;
 		if(currentHeight >= this->getDimensions().height) return;
 		object->Render();
 	}
@@ -44,6 +47,13 @@ void myGui::Widget::AddObject(void* object){
 		this->dimensions.x + padding.x,
 		this->dimensions.y + currHeight + padding.y
 	});
+
+	objectToAdd->changeDimensions(Rectangle{
+			objectToAdd->dimensions.x,
+			objectToAdd->dimensions.y,
+			std::min(objectToAdd->dimensions.width, this->dimensions.width - padding.x - padding.width),
+			objectToAdd->dimensions.height
+		});
 
 	objects.push_back(objectToAdd);
 }
@@ -142,8 +152,13 @@ void myGui::Button::changePosition(Vector2 position){
 	this->dimensions.x = position.x;
 	this->dimensions.y = position.y;
 }
+
 Rectangle myGui::Button::getDimensions(){
 	return this->dimensions;
+}
+
+void myGui::Button::changeDimensions(Rectangle dimensions){
+	this->dimensions = dimensions;
 }
 
 // TextField implementation
@@ -198,9 +213,10 @@ void myGui::TextField::Render(){
 	Font font = GetFontDefault();
 	float fontSize = 10.0f;
 	float spacing = 1.0f;
-	float maxWidth = dimensions.width - padding.x - padding.width - 10.0f;
+	float maxWidth = dimensions.width - padding.x - padding.width - 30.0f;
 
 	std::string wrappedText = WrapText(*outputMessage, maxWidth, fontSize, spacing, font);
+
 	DrawTextEx(font, wrappedText.c_str(), {dimensions.x + 10, dimensions.y + 10}, fontSize, spacing, BLACK);
 
 }
@@ -252,8 +268,17 @@ void myGui::TextField::changePosition(Vector2 position){
 	this->dimensions.y = position.y;
 }
 
+void myGui::TextField::submitText(){
+	isEnter = true;
+	shouldClear = true;
+}
+
 Rectangle myGui::TextField::getDimensions(){
 	return this->dimensions;
+}
+
+void myGui::TextField::changeDimensions(Rectangle dimensions){
+	this->dimensions = dimensions;
 }
 
 #endif

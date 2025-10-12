@@ -1,38 +1,30 @@
 #include <helpers.h>
 
 std::string WrapText(const std::string& text, float maxWidth, float fontSize, float spacing, Font font) {
-    std::stringstream ss(text);
-    std::string word;
-    std::string wrapped;
+	std::string wrapped;
     float lineWidth = 0.0f;
 
-    while (ss >> word) {
-        std::string withSpace = word + " ";
-        float wordWidth = MeasureTextEx(font, withSpace.c_str(), fontSize, spacing).x;
+    for (size_t i = 0; i < text.size(); ++i) {
+        char c = text[i];
+        std::string s(1, c);
 
-        if (wordWidth > maxWidth) {
-            for (char c : word) {
-                std::string s(1, c);
-                float charWidth = MeasureTextEx(font, s.c_str(), fontSize, spacing).x;
-
-                if (lineWidth + charWidth > maxWidth) {
-                    wrapped += "\n";
-                    lineWidth = 0.0f;
-                }
-                wrapped += c;
-                lineWidth += charWidth;
-            }
-            wrapped += " ";
-            lineWidth += MeasureTextEx(font, " ", fontSize, spacing).x;
-        } 
-        else if (lineWidth + wordWidth > maxWidth) {
-            wrapped += "\n" + word + " ";
-            lineWidth = wordWidth;
-        } 
-        else {
-            wrapped += word + " ";
-            lineWidth += wordWidth;
+        if (c == '\n') {
+            wrapped += '\n';
+            lineWidth = 0.0f;
+            continue;
         }
+
+        float charWidth = MeasureTextEx(font, s.c_str(), fontSize, spacing).x;
+
+        if (lineWidth + charWidth > maxWidth && c != ' ') {
+            wrapped += '\n';
+            lineWidth = 0.0f;
+
+            if (c == ' ') continue;
+        }
+
+        wrapped += c;
+        lineWidth += charWidth;
     }
 
     return wrapped;
