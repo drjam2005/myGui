@@ -3,19 +3,21 @@
     - A raylib based, immediate mode GUI rendering utility for personal use and study
       still very much in a Work in Progress...
 
-## Features
+## Objects
+- Widget (to store objects)
 - Button
 - TextField
-- ~~Checkbox~~
+- Checkbox (kinda done)
 - ~~Radio buttons~~
 - ~~Slider~~
 
-## Usage
+# Usage
 
+## For single standard use
 1. `Button`
 ```cpp
 #include <raylib.h>
-#include <gui.h>
+#include "gui.h"
 
 void doX(int x){
     // function x
@@ -49,6 +51,8 @@ int main(){
 
         EndDrawing();
     }
+    CloseWindow();
+    return 0;
 }
 
 ```
@@ -58,7 +62,7 @@ int main(){
 ```cpp
 #include <iostream>
 #include <raylib.h>
-#include <gui.h>
+#include "gui.h"
 
 int main(){
     // textfield initialization
@@ -89,6 +93,69 @@ int main(){
 
         EndDrawing();
     }
+    CloseWindow();
+    return 0;
 }
 ```
 
+## Widget usage
+    - You can use widgets to store multiple 
+```cpp
+#include <raylib.h>
+#include <string>
+#include "gui.h"
+
+int main(){
+    // make sure to initialize the window first before calling widget
+    InitWindow(500, 500, "myGui");
+    SetTargetFPS(60);
+    myGui::Widget widget(
+        // dimensions
+        {
+            .x = 10,
+            .y = 10,
+            .width = 100,
+            .height = 250
+        },
+        // padding
+        {
+            .x = 10,
+            .y = 10,
+            .width = 10,
+            .height = 10
+    });
+
+    myGui::Button button1({
+        /* initial x and y values are ignored,
+           as they are organized in the widget */
+        { .x = 10.0f, .y = 10.0f, // <- ignored
+          .width = 200 // <- width is capped at widget with - padding.x - padding.width
+          .height = 100,
+        }, 
+        "hi...",
+        2.0f
+    });
+    std::string text = "test";
+    myGui::TextFieldl textfield({
+        { .x = 10.0f, .y = 10.0f, // <- ignored
+          .width = 200 
+          .height = 100,
+        },
+        &text,
+        2.0f
+    });
+
+    while(!WindowShouldClose()){
+        BeginDrawing();
+        ClearBackground(BLACK);
+        
+        widget.Update();
+        widget.Render();
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+    return 0;
+}
+```
