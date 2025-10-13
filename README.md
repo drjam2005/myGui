@@ -99,7 +99,7 @@ int main(){
 ```
 
 ## Widget usage
-    - You can use widgets to store multiple 
+    - You can use widgets to store multiple objects into one pane
 ```cpp
 #include <raylib.h>
 #include <string>
