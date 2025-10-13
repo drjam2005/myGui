@@ -23,8 +23,10 @@ namespace myGui {
 			std::vector<Widget*> objects;
 			Rectangle dimensions;
 			Rectangle padding;
+			bool isCollapsed = false;
+			char* title = nullptr;
 
-			Widget(Rectangle dimensions, Rectangle padding={0.f,0.f,0.f,0.f});
+			Widget(char* title, Rectangle dimensions, Rectangle padding={0.f,0.f,0.f,0.f});
 			void AddObject(void* object);
 			virtual void changePosition(Vector2 position);
 			virtual void changeDimensions(Rectangle dimensions);

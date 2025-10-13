@@ -110,6 +110,8 @@ int main(){
     InitWindow(500, 500, "myGui");
     SetTargetFPS(60);
     myGui::Widget widget(
+        // title
+        "myGui Widget",
         // dimensions
         {
             .x = 10,

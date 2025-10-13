@@ -61,7 +61,7 @@ int main(){
 		1,
 		"hi...");
 	button3.SetClick([&]{textfield.submitText();});
-	myGui::Widget widget({10, 10, 150, 400}, {10, 10, 10, 10});
+	myGui::Widget widget("My Widget", {10, 10, 150, 400}, {10, 10, 10, 10});
 	widget.AddObject(&textfield);
 	widget.AddObject(&check);
 	widget.AddObject(&button3);

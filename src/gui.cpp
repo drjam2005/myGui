@@ -9,7 +9,8 @@
 //    Slider
 
 // Widget
-myGui::Widget::Widget(Rectangle dimensions, Rectangle padding){
+myGui::Widget::Widget(char* title, Rectangle dimensions, Rectangle padding){
+	this->title = title;
 	this->dimensions = dimensions;
 	this->padding = padding;
 }
@@ -24,8 +25,12 @@ void myGui::Widget::changeDimensions(Rectangle dimensions){
 
 void myGui::Widget::Render(){
 	float currentHeight = 0.0f;
-	DrawRectangleRec(this->dimensions, Color{50,50,100,255});
+	Rectangle collapseHitBox = {this->dimensions.x+this->dimensions.width-20, this->dimensions.y, 20, 20};
 	DrawRectangleRec({this->dimensions.x, this->dimensions.y, this->dimensions.width, 20}, Color{30,30,55,255});
+	DrawRectangleRec(collapseHitBox, Color{20,20,30,255});
+	DrawText(this->title, this->dimensions.x+5, this->dimensions.y+5, 10, WHITE);
+	if(isCollapsed) return;
+	DrawRectangleRec({this->dimensions.x, this->dimensions.y+20, this->dimensions.width, this->dimensions.height-20}, Color{50,50,100,255});
 	for (auto& object : objects) {
 		currentHeight += object->getDimensions().height;
 		if(currentHeight >= this->getDimensions().height) return;
@@ -60,7 +65,14 @@ void myGui::Widget::AddObject(void* object){
 }
 
 void myGui::Widget::Update() {
-	Rectangle hitbox = {this->dimensions.x, this->dimensions.y, this->dimensions.width, 20};
+	Rectangle hitbox = {this->dimensions.x, this->dimensions.y, this->dimensions.width-20, 20};
+	Rectangle collapseHitBox = {this->dimensions.x+this->dimensions.width-20, this->dimensions.y, 20, 20};
+	if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+		if(CheckCollisionPointRec(GetMousePosition(), collapseHitBox)){
+			isCollapsed = !isCollapsed;
+			return;
+		}
+	}
 	if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
 		if(CheckCollisionPointRec(GetMousePosition(), hitbox)){
 			Vector2 offset = {GetMousePosition().x-20, GetMousePosition().y-10};
@@ -90,7 +102,7 @@ Rectangle myGui::Widget::getDimensions(){
 // Button implementation
 myGui::Button::Button(): Widget({},{}) {}
 myGui::Button::Button(Rectangle dimensions, char* text, float round): 
-	Widget(dimensions)
+	Widget("",dimensions)
 {
 	if(0.0f < dimensions.x && dimensions.x < 1.0f){
 		this->dimensions.x = dimensions.x * GetScreenWidth();
@@ -185,7 +197,7 @@ void myGui::Button::changeDimensions(Rectangle dimensions){
 // TextField implementation
 myGui::TextField::TextField(): Widget({},{}) {}
 myGui::TextField::TextField(Rectangle dimensions, std::string* initialMessage, float round):
-	Widget(dimensions)
+	Widget("",dimensions)
 {
 	this->dimensions = dimensions;
 	if(0.0f < dimensions.x && dimensions.x < 1.0f){
@@ -304,7 +316,7 @@ void myGui::TextField::changeDimensions(Rectangle dimensions){
 
 // Checkbox implementation
 myGui::Checkbox::Checkbox(Vector2 position, int ID, char* text)
-    : myGui::Widget({position.x, position.y, 20, 20})
+    : myGui::Widget("",{position.x, position.y, 20, 20})
 {
 	this->text = text;
     this->ID = ID;
