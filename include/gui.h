@@ -7,10 +7,19 @@
 #include <functional>
 #include <vector>
 
+enum WIDGET_TYPE {
+	WIDGET,
+	BUTTON,
+	TEXT_FIELD,
+	CHECKBOX,
+	RADIO_BUTTON
+};
+
 namespace myGui {
 	class Widget {
 		private:
 		public:
+			WIDGET_TYPE type = WIDGET;
 			std::vector<Widget*> objects;
 			Rectangle dimensions;
 			Rectangle padding;
@@ -26,6 +35,7 @@ namespace myGui {
 
 	class Button : public Widget {
 		private:
+			WIDGET_TYPE type = BUTTON;
 			float round = 0.f;
 			bool autoscale = false;
 			char* text = nullptr;
@@ -49,6 +59,7 @@ namespace myGui {
 
 	class TextField : public Widget{
 		private:
+			WIDGET_TYPE type = TEXT_FIELD;
 			std::string* outputMessage;
 			float round = 0.f;
 			bool isEnter = false;
@@ -66,6 +77,26 @@ namespace myGui {
 			void changePosition(Vector2 position) override;
 			void changeDimensions(Rectangle dimensions) override;
 			Rectangle getDimensions() override;
+	};
+
+	class Checkbox : public Widget {
+		private:
+			WIDGET_TYPE type = CHECKBOX;
+			int ID;
+			int state = 0;
+			char* text = nullptr;
+		public:
+			Checkbox(Vector2 position, int ID, char* text);
+
+			void Update() override;
+			void Render() override;
+			void changePosition(Vector2 position) override;
+			void changeDimensions(Rectangle dimensions) override;
+			Rectangle getDimensions() override;
+	};
+
+	class RadioButton : public Widget {
+
 	};
 }
 #endif

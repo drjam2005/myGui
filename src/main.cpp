@@ -4,6 +4,7 @@
 
 int main(){
 	// window 
+	SetTraceLogLevel(LOG_ERROR); 
 	InitWindow(500, 500, "myGui");
 	SetTargetFPS(60);
 
@@ -53,11 +54,16 @@ int main(){
         (char*)"submit",
         5.0f
     );
+	myGui::Checkbox check({
+			.x = 100,
+			.y = 100
+		},
+		1,
+		"hi...");
 	button3.SetClick([&]{textfield.submitText();});
 	myGui::Widget widget({10, 10, 150, 400}, {10, 10, 10, 10});
-	widget.AddObject(&button);
-	widget.AddObject(&button2);
 	widget.AddObject(&textfield);
+	widget.AddObject(&check);
 	widget.AddObject(&button3);
 
 	// loop

@@ -1,6 +1,6 @@
 #include <gui.h>
+#include <iostream>
 #include <helpers.h>
-#include <sstream>
 #ifdef MYGUI_H
 
 // TODO:
@@ -25,6 +25,7 @@ void myGui::Widget::changeDimensions(Rectangle dimensions){
 void myGui::Widget::Render(){
 	float currentHeight = 0.0f;
 	DrawRectangleRec(this->dimensions, Color{50,50,100,255});
+	DrawRectangleRec({this->dimensions.x, this->dimensions.y, this->dimensions.width, 20}, Color{30,30,55,255});
 	for (auto& object : objects) {
 		currentHeight += object->getDimensions().height;
 		if(currentHeight >= this->getDimensions().height) return;
@@ -35,7 +36,7 @@ void myGui::Widget::Render(){
 void myGui::Widget::AddObject(void* object){
 	Widget* objectToAdd = (Widget*)object;
 
-	float currHeight = 0.0f;
+	float currHeight = 15.0f;
 	for (auto& obj : objects) {
 		currHeight += padding.y + obj->getDimensions().height + padding.height;
 		if(obj == object) {
@@ -59,6 +60,26 @@ void myGui::Widget::AddObject(void* object){
 }
 
 void myGui::Widget::Update() {
+	Rectangle hitbox = {this->dimensions.x, this->dimensions.y, this->dimensions.width, 20};
+	if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
+		if(CheckCollisionPointRec(GetMousePosition(), hitbox)){
+			Vector2 offset = {GetMousePosition().x-20, GetMousePosition().y-10};
+			this->changePosition(offset);
+			float currHeight = 15.0f;
+			for (auto& obj : objects) {
+				obj->changeDimensions(
+					Rectangle{
+						this->dimensions.x + padding.x,
+						this->dimensions.y + currHeight + padding.y,
+						std::min(obj->getDimensions().width, this->dimensions.width - padding.x - padding.width),
+						obj->getDimensions().height
+					}
+				);
+				currHeight += obj->getDimensions().height + padding.y + padding.height;
+			}
+		}
+	}
+
 	for(auto& object : objects){
 		object->Update();
 	}
@@ -281,4 +302,52 @@ void myGui::TextField::changeDimensions(Rectangle dimensions){
 	this->dimensions = dimensions;
 }
 
+// Checkbox implementation
+myGui::Checkbox::Checkbox(Vector2 position, int ID, char* text)
+    : myGui::Widget({position.x, position.y, 20, 20})
+{
+	this->text = text;
+    this->ID = ID;
+    this->state = false;
+}
+
+
+void myGui::Checkbox::Render() {
+	DrawRectangleRec(dimensions, WHITE);
+	DrawText(this->text, dimensions.x + 30, dimensions.y + 5, 15, WHITE);
+    if (state)
+		DrawRectangleRec({
+			dimensions.x + 5,
+			dimensions.y + 5,
+			dimensions.width - 10,
+			dimensions.height - 10
+		}, BLUE);
+}
+
+
+void myGui::Checkbox::Update() {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        if (CheckCollisionPointRec(GetMousePosition(), dimensions))
+            state = !state;
+	}
+}
+
+
+
+void myGui::Checkbox::changePosition(Vector2 givenPosition) {
+    this->dimensions.x = givenPosition.x;
+    this->dimensions.y = givenPosition.y;
+}
+
+
+void myGui::Checkbox::changeDimensions(Rectangle rect) {
+    this->dimensions = rect;
+}
+
+
+Rectangle myGui::Checkbox::getDimensions() {
+    return this->dimensions;
+}
+
+// Radio Button Implementation
 #endif
