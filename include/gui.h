@@ -100,5 +100,19 @@ namespace myGui {
 	class RadioButton : public Widget {
 
 	};
+
+	class Slider : public Widget {
+		private:
+			float min = -1.0f;
+			float max = -1.0f;
+			float current = min;
+		public:
+			Slider(Rectangle dimensions, Vector2 range, float startVal=-1.0f);
+			void Update() override;
+			void Render() override;
+			void changePosition(Vector2 position) override;
+			void changeDimensions(Rectangle dimensons) override;
+			Rectangle getDimensions() override;
+	};
 }
 #endif

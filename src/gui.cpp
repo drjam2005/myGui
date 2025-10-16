@@ -1,10 +1,11 @@
 #include <gui.h>
+#include <algorithm>
 #include <iostream>
 #include <helpers.h>
 #ifdef MYGUI_H
 
 // TODO:
-//    Checkbox
+//    Checkbox (almost done)
 //    Radio buttons
 //    Slider
 
@@ -362,4 +363,68 @@ Rectangle myGui::Checkbox::getDimensions() {
 }
 
 // Radio Button Implementation
+// TODO
+
+// Slider Implementation
+myGui::Slider::Slider(Rectangle dimensions, Vector2 range, float startVal):
+	Widget("Slider", dimensions)
+{
+	this->min = range.x;
+	this->max = range.y;
+
+	this->current = this->min;
+	if(startVal >= this->min && startVal <= this->max){
+		this->current = startVal;
+	}
+}
+
+void myGui::Slider::Update() {
+    Rectangle hitbox = {
+        this->dimensions.x+10,
+        this->dimensions.y,
+        this->dimensions.width+10,
+        20
+    };
+
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+        if (CheckCollisionPointRec(GetMousePosition(), hitbox)) {
+			float mouseX = GetMousePosition().x;
+			this->current = 
+				std::max(this->min, std::min(this->max,((mouseX-this->dimensions.x-10))*(this->max-this->min)/(this->dimensions.width)));
+        }
+    }
+}
+
+
+void myGui::Slider::Render(){
+	DrawRectangleRec(
+			{
+				this->dimensions.x+10,
+				this->dimensions.y+10,
+				this->dimensions.width,
+				5
+			}, GRAY);
+	DrawRectangleRec(
+			{
+				this->dimensions.x+10+((this->current/(this->max-this->min)))*(this->dimensions.width)-2.5f,
+				this->dimensions.y+5.0f,
+				5,
+				15
+			}, BLUE);
+	DrawText(TextFormat("%f",this->current), 10, 10, 10, WHITE);
+}
+
+void myGui::Slider::changeDimensions(Rectangle dimensions){
+	this->dimensions.x = dimensions.x;
+	this->dimensions.y = dimensions.y;
+}
+
+void myGui::Slider::changePosition(Vector2 position){
+	this->dimensions.x = position.x;
+	this->dimensions.y = position.y;
+}
+
+Rectangle myGui::Slider::getDimensions(){
+	return this->dimensions;
+}
 #endif
