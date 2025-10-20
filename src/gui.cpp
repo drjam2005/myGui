@@ -256,36 +256,35 @@ void myGui::TextField::Render(){
 void myGui::TextField::Update() {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         isInText = CheckCollisionPointRec(GetMousePosition(), dimensions);
-    if (!isInText) return;
+    if (!isInText) 
+        return;
 
-	if (IsKeyPressed(KEY_ENTER)) {
-		if ((IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))){
-			*outputMessage += '\n';
-		}else{
-			isEnter = true;
-			shouldClear = true;
-			return;
-		}
-	}
+    if (shouldClear && isEnter) {
+        outputMessage->clear();
+        shouldClear = false;
+        isEnter = false;
+    }
+
+    if (IsKeyPressed(KEY_ENTER)) {
+        if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
+            *outputMessage += '\n';
+        } else {
+            isEnter = true;
+            shouldClear = true;
+        }
+    }
+
 
     int key = GetCharPressed();
     while (key > 0) {
-        if (key >= 32 && key <= 125){
+        if (key >= 32 && key <= 125)
             *outputMessage += static_cast<char>(key);
-		}
         key = GetCharPressed();
     }
 
-    if (IsKeyPressed(KEY_BACKSPACE) && !outputMessage->empty()){
-		outputMessage->pop_back();
-	}
+    if (IsKeyPressed(KEY_BACKSPACE) && !outputMessage->empty())
+        outputMessage->pop_back();
 
-	if (shouldClear && !isEnter) {
-        outputMessage->clear();
-        shouldClear = false;
-    }
-
-	return;
 }
 
 bool myGui::TextField::checkEnter(){
@@ -294,6 +293,10 @@ bool myGui::TextField::checkEnter(){
 		return true;
 	}
 	return false;
+}
+
+bool myGui::TextField::isSubmit(){
+	return isEnter;
 }
 void myGui::TextField::changePosition(Vector2 position){
 	this->dimensions.x = position.x;

@@ -64,15 +64,16 @@ namespace myGui {
 			WIDGET_TYPE type = TEXT_FIELD;
 			std::string* outputMessage;
 			float round = 0.f;
-			bool isEnter = false;
 			bool shouldClear = false;
-		public:
+			bool isEnter = false;
 			bool isInText = false;
+		public:
 			TextField();
 			TextField(Rectangle, std::string*, float round=0.0f);
 
 			void submitText();
 			bool checkEnter();
+			bool isSubmit();
 
 			void Render() override;
 			void Update() override;

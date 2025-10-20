@@ -65,8 +65,7 @@ int main(){
 #include "gui.h"
 
 int main(){
-    // textfield initialization
-    std::string message = ""; // will be used to store the message when the user presses KEY_ENTER
+    std::string message = "Placeholder"; // will be used to store the message when the user presses KEY_ENTER
     myGui::TextField textField(
         {
             .x = 10,
@@ -85,10 +84,11 @@ int main(){
         BeginDrawing();
         ClearBackground(BLACK);
 
-		std::cout << "Message: " << message << std::endl;
-        if(textField.Update()) { // returns true if the user presses enter
-			std::cout << "User pressed Enter!" << std::endl;
-        }
+        textField.Update();
+		if(textField.isSubmit()){ // check wether the user submitted
+			std::cout << "Message: " << message << std::endl;
+		}
+
         textField.Render();
 
         EndDrawing();
