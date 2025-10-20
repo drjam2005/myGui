@@ -3,18 +3,10 @@
 #include <iostream>
 
 int main(){
-    std::string message = "woah"; // will be used to store the message when the user presses KEY_ENTER
-    myGui::TextField textField(
-        {
-            .x = 10,
-            .y = .2, // Note: you can use values between 0 and 1 to indicade percentages of screen
-            .width = 100,
-            .height = 50
-        },
-        &message,
-        5.0f
-    );
-
+	myGui::Button button({10, 10, 200, 100}, "wow", 20.0f);
+	button.SetClick([&] { std::cout << "click..." << std::endl; });
+	button.SetHold([&] { std::cout << "hold..." << std::endl; });
+	button.SetRelease([&] { std::cout << "release..." << std::endl; });
 
     InitWindow(500, 500, "myGui");
     SetTargetFPS(60);
@@ -22,12 +14,8 @@ int main(){
         BeginDrawing();
         ClearBackground(BLACK);
 
-        textField.Update();
-		if(textField.isSubmit()){
-			std::cout << "Message: " << message << std::endl;
-		}
-
-        textField.Render();
+		button.Update();
+		button.Render();
 
         EndDrawing();
     }

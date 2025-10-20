@@ -109,6 +109,7 @@ namespace myGui {
 			float current = min;
 		public:
 			Slider(Rectangle dimensions, Vector2 range, float startVal=-1.0f);
+
 			void Update() override;
 			void Render() override;
 			void changePosition(Vector2 position) override;

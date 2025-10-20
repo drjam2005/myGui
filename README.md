@@ -36,9 +36,9 @@ int main(){
         5.0f                // optional rounding
     );
 
-    button.SetClick  ([&]{ doX(5);});
- // button.SetHold   ([&]{ doX(6);)});
- // button.SetRelease([&]{ doX(7);)});
+    button.SetClick  ([&]{ doX(5); });
+ // button.SetHold   ([&]{ doX(6); );});
+ // button.SetRelease([&]{ doX(7); );});
 
     InitWindow(500, 500, "myGui");
     SetTargetFPS(60);
