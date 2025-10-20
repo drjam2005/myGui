@@ -8,8 +8,8 @@
 - Button
 - TextField
 - Checkbox (kinda done)
+- Slider
 - ~~Radio buttons~~
-- ~~Slider~~
 
 # Usage
 
@@ -90,6 +90,42 @@ int main(){
 			std::cout << "User pressed Enter!" << std::endl;
         }
         textField.Render();
+
+        EndDrawing();
+    }
+    CloseWindow();
+    return 0;
+}
+```
+
+3. `Slider`
+```cpp
+#include <raylib.h>
+#include "gui.h"
+
+int main(){
+    // Slider initialization
+    myGui::Slider slider(
+            {
+                .x = 20.0f,
+                .y = 20.0f,
+                .width = 200.0f, // optional, used to horizontally scale the slider
+                .height = 0.0f // no implementation
+            },
+            {
+                .x = -50, // min
+                .y = 100 // max
+            },
+            25.0f // optional starting value
+        );
+    InitWindow(500, 500, "myGui");
+    SetTargetFPS(60);
+    while(!WindowShouldClose()){
+        BeginDrawing();
+        ClearBackground(BLACK);
+        
+        slider.Update();
+        slider.Render();
 
         EndDrawing();
     }

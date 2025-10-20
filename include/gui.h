@@ -98,7 +98,7 @@ namespace myGui {
 	};
 
 	class RadioButton : public Widget {
-
+		// TODO
 	};
 
 	class Slider : public Widget {

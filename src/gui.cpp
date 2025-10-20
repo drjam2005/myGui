@@ -1,13 +1,11 @@
 #include <gui.h>
 #include <algorithm>
-#include <iostream>
 #include <helpers.h>
 #ifdef MYGUI_H
 
 // TODO:
 //    Checkbox (almost done)
 //    Radio buttons
-//    Slider
 
 // Widget
 myGui::Widget::Widget(char* title, Rectangle dimensions, Rectangle padding){
@@ -379,41 +377,56 @@ myGui::Slider::Slider(Rectangle dimensions, Vector2 range, float startVal):
 }
 
 void myGui::Slider::Update() {
+    float width = this->dimensions.width > 0 ? this->dimensions.width : (this->max - this->min);
+
     Rectangle hitbox = {
-        this->dimensions.x+10,
+        this->dimensions.x + 10,
         this->dimensions.y,
-        this->dimensions.width+10,
+        width + 10,
         20
     };
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         if (CheckCollisionPointRec(GetMousePosition(), hitbox)) {
-			float mouseX = GetMousePosition().x;
-			this->current = 
-				std::max(this->min, std::min(this->max,((mouseX-this->dimensions.x-10))*(this->max-this->min)/(this->dimensions.width)));
+            float mouseX = GetMousePosition().x;
+
+            float clampedX = std::max(
+                this->dimensions.x + 10.0f,
+                std::min(mouseX, this->dimensions.x + 10.0f + width)
+            );
+
+            float t = (clampedX - (this->dimensions.x + 10.0f)) / width;
+            this->current = this->min + t * (this->max - this->min);
         }
     }
 }
 
+void myGui::Slider::Render() {
+    float width = this->dimensions.width > 0.0f ? this->dimensions.width : (this->max - this->min);
+    float t = std::max(0.0f, std::min(1.0f, (this->current - this->min) / (this->max - this->min)));
 
-void myGui::Slider::Render(){
-	DrawRectangleRec(
-			{
-				this->dimensions.x+10,
-				this->dimensions.y+10,
-				this->dimensions.width,
-				5
-			}, GRAY);
-	DrawRectangleRec(
-			{
-				this->dimensions.x+10+((this->current/(this->max-this->min)))*(this->dimensions.width)-2.5f,
-				this->dimensions.y+5.0f,
-				5,
-				15
-			}, BLUE);
-	DrawText(TextFormat("%f",this->current), 10, 10, 10, WHITE);
+    // Track
+    DrawRectangleRec(
+        {
+            this->dimensions.x + 10,
+            this->dimensions.y + 10,
+            width,
+            5
+        },
+        GRAY
+    );
+
+    // Knob (use the same width as in Update)
+    DrawRectangleRec(
+        {
+            this->dimensions.x + 10 + t * width - 2.5f,
+            this->dimensions.y + 5.0f,
+            5,
+            15
+        },
+        BLUE
+    );
 }
-
 void myGui::Slider::changeDimensions(Rectangle dimensions){
 	this->dimensions.x = dimensions.x;
 	this->dimensions.y = dimensions.y;
@@ -427,4 +440,5 @@ void myGui::Slider::changePosition(Vector2 position){
 Rectangle myGui::Slider::getDimensions(){
 	return this->dimensions;
 }
+
 #endif
