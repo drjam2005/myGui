@@ -1,25 +1,25 @@
 #include <raylib.h>
-#include <iostream>
 #include <gui.h>
+#include <iostream>
 
 int main(){
-	// window 
-	SetTraceLogLevel(LOG_ERROR); 
-	InitWindow(500, 500, "myGui");
-	SetTargetFPS(60);
+	myGui::Button button({10, 10, 200, 100}, "wow", 20.0f);
+	button.SetClick([&] { std::cout << "click..." << std::endl; });
+	button.SetHold([&] { std::cout << "hold..." << std::endl; });
+	button.SetRelease([&] { std::cout << "release..." << std::endl; });
 
-	myGui::Slider slider({100,100,300,10}, {-100,200}, 25);
-
-	// loop
+    InitWindow(500, 500, "myGui");
+    SetTargetFPS(60);
     while(!WindowShouldClose()){
         BeginDrawing();
         ClearBackground(BLACK);
 
-		slider.Update();
-		slider.Render();
+		button.Update();
+		button.Render();
 
         EndDrawing();
     }
+    CloseWindow();
+    return 0;
 }
-
 

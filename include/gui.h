@@ -9,6 +9,7 @@
 
 enum WIDGET_TYPE {
 	WIDGET,
+    LABEL,
 	BUTTON,
 	TEXT_FIELD,
 	CHECKBOX,
@@ -25,15 +26,33 @@ namespace myGui {
 			Rectangle padding;
 			bool isCollapsed = false;
 			char* title = nullptr;
+            Color wClr = Color{50,50,100,255};
 
 			Widget(char* title, Rectangle dimensions, Rectangle padding={0.f,0.f,0.f,0.f});
 			void AddObject(void* object);
+            void UpdateLayoutRecursive();
 			virtual void changePosition(Vector2 position);
 			virtual void changeDimensions(Rectangle dimensions);
 			virtual void Update();
 			virtual void Render();
 			virtual Rectangle getDimensions();
 	};
+
+	class Label : public Widget {
+		private:
+			WIDGET_TYPE type = LABEL;
+			char* text = nullptr;
+		public:
+			Label();
+			Label(Vector2 position, char* text);
+
+			void Update() override;
+			void Render() override;
+			void changePosition(Vector2 position) override;
+			void changeDimensions(Rectangle dimensions) override;
+			Rectangle getDimensions() override;
+	};
+
 
 	class Button : public Widget {
 		private:

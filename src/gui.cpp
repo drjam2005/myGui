@@ -16,13 +16,16 @@ myGui::Widget::Widget(char* title, Rectangle dimensions, Rectangle padding){
 	this->padding = padding;
 }
 void myGui::Widget::changePosition(Vector2 position){
-	this->dimensions.x = position.x;
-	this->dimensions.y = position.y;
+    this->dimensions.x = position.x;
+    this->dimensions.y = position.y;
+    UpdateLayoutRecursive();
 }
 
 void myGui::Widget::changeDimensions(Rectangle dimensions){
-	this->dimensions = dimensions;
+    this->dimensions = dimensions;
+    UpdateLayoutRecursive();
 }
+
 
 void myGui::Widget::Render(){
 	float currentHeight = 0.0f;
@@ -31,74 +34,130 @@ void myGui::Widget::Render(){
 	DrawRectangleRec(collapseHitBox, Color{20,20,30,255});
 	DrawText(this->title, this->dimensions.x+5, this->dimensions.y+5, 10, WHITE);
 	if(isCollapsed) return;
-	DrawRectangleRec({this->dimensions.x, this->dimensions.y+20, this->dimensions.width, this->dimensions.height-20}, Color{50,50,100,255});
+
+	DrawRectangleRec({this->dimensions.x, this->dimensions.y+20, this->dimensions.width, this->dimensions.height-20}, wClr);
+
+    Widget* onTop = nullptr;
 	for (auto& object : objects) {
 		currentHeight += object->getDimensions().height;
 		if(currentHeight >= this->getDimensions().height) return;
+        if(object->type == WIDGET && !object->isCollapsed){
+            object->wClr.r = std::max(0, wClr.r - 10);
+            object->wClr.g = std::max(0, wClr.g - 10);
+            object->wClr.b = std::max(0, wClr.b - 10);
+            onTop = object;
+            continue;
+        }
 		object->Render();
 	}
+    if(onTop)
+        onTop->Render();
 }
 
 void myGui::Widget::AddObject(void* object){
-	Widget* objectToAdd = (Widget*)object;
+    Widget* objectToAdd = (Widget*)object;
+    objects.push_back(objectToAdd);
 
-	float currHeight = 15.0f;
-	for (auto& obj : objects) {
-		currHeight += padding.y + obj->getDimensions().height + padding.height;
-		if(obj == object) {
-			break;
-		}
-	}
-	
-	objectToAdd->changePosition(Vector2{
-		this->dimensions.x + padding.x,
-		this->dimensions.y + currHeight + padding.y
-	});
-
-	objectToAdd->changeDimensions(Rectangle{
-			objectToAdd->dimensions.x,
-			objectToAdd->dimensions.y,
-			std::min(objectToAdd->dimensions.width, this->dimensions.width - padding.x - padding.width),
-			objectToAdd->dimensions.height
-		});
-
-	objects.push_back(objectToAdd);
+    UpdateLayoutRecursive();
 }
+
 
 void myGui::Widget::Update() {
-	Rectangle hitbox = {this->dimensions.x, this->dimensions.y, this->dimensions.width-20, 20};
-	Rectangle collapseHitBox = {this->dimensions.x+this->dimensions.width-20, this->dimensions.y, 20, 20};
-	if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-		if(CheckCollisionPointRec(GetMousePosition(), collapseHitBox)){
-			isCollapsed = !isCollapsed;
-			return;
-		}
-	}
-	if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
-		if(CheckCollisionPointRec(GetMousePosition(), hitbox)){
-			Vector2 offset = {GetMousePosition().x-20, GetMousePosition().y-10};
-			this->changePosition(offset);
-			float currHeight = 15.0f;
-			for (auto& obj : objects) {
-				obj->changeDimensions(
-					Rectangle{
-						this->dimensions.x + padding.x,
-						this->dimensions.y + currHeight + padding.y,
-						std::min(obj->getDimensions().width, this->dimensions.width - padding.x - padding.width),
-						obj->getDimensions().height
-					}
-				);
-				currHeight += obj->getDimensions().height + padding.y + padding.height;
-			}
-		}
-	}
+    Rectangle hitbox = {this->dimensions.x, this->dimensions.y, this->dimensions.width-20, 20};
+    Rectangle collapseHitBox = {this->dimensions.x+this->dimensions.width-20, this->dimensions.y, 20, 20};
 
-	for(auto& object : objects){
-		object->Update();
-	}
+    if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+        if(CheckCollisionPointRec(GetMousePosition(), collapseHitBox)){
+            isCollapsed = !isCollapsed;
+            return;
+        }
+    }
+
+    if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
+        if(CheckCollisionPointRec(GetMousePosition(), hitbox)){
+            Vector2 offset = {GetMousePosition().x-20, GetMousePosition().y-10};
+            changePosition(offset);  // now auto-propagates
+        }
+    }
+
+    for(auto& object : objects)
+        object->Update();
 }
+
+
+void myGui::Widget::UpdateLayoutRecursive() {
+    float currHeight = 15.0f;
+
+    for (auto& obj : objects) {
+
+        float stackHeight;
+
+        if (obj->type == WIDGET) {
+            stackHeight = 20.0f;           // header height for stacking only
+            obj->isCollapsed = true;
+        } else {
+            stackHeight = obj->getDimensions().height;
+        }
+
+        // --- Position is always updated ---
+        float newX = this->dimensions.x + padding.x;
+        float newY = this->dimensions.y + currHeight + padding.y;
+
+        obj->changePosition({ newX, newY });
+
+        // --- Width is updated, but height must NOT be forced to stackHeight ---
+        Rectangle dim = obj->getDimensions();
+        dim.width = std::min(
+            dim.width,
+            this->dimensions.width - padding.x - padding.width
+        );
+
+        // keep REAL height
+        obj->changeDimensions(dim);
+
+        // Increase stacking height
+        currHeight += stackHeight + padding.y + padding.height;
+
+        // recurse inside children
+        obj->UpdateLayoutRecursive();
+    }
+}
+
+
+
 Rectangle myGui::Widget::getDimensions(){
 	return dimensions;
+}
+
+// Label Implementation
+myGui::Label::Label(Vector2 position, char* text)
+    : myGui::Widget("",{position.x, position.y, 20, 20})
+{
+	this->text = text;
+}
+
+void myGui::Label::Update(){
+
+    return;
+}
+
+void myGui::Label::Render() {
+	DrawText(this->text, dimensions.x + 30, dimensions.y + 5, 15, WHITE);
+}
+
+void myGui::Label::changePosition(Vector2 givenPosition) {
+    this->dimensions.x = givenPosition.x;
+    this->dimensions.y = givenPosition.y;
+}
+
+
+void myGui::Label::changeDimensions(Rectangle rect) {
+    this->dimensions = rect;
+}
+
+
+Rectangle myGui::Label::getDimensions() {
+    return this->dimensions;
 }
 // Button implementation
 myGui::Button::Button(): Widget({},{}) {}
